@@ -23,16 +23,13 @@ You will find most of them can be overridden through an integer value called CFG
 Of course, there is a function to produce an acceptable CFG value from logical conditions, called C_COMMUT.
 
 Now you're done with your babbling, what about some code ?
-"C" family - Commands to obey
-> C_CDELEM : sets/resets a boolean command according to a boolean run demand and a boolean default. SOF compatible
+- "C" family - Commands to obey
+>- C_CDELEM : sets/resets a boolean command according to a boolean run demand and a boolean default. SOF compatible
+>- C_TPOCDE : Same as C_CDELEM, but with activation and deactivation delays. SOF compatible
+>- C_COMMUT : SOF integer calculation function.
+>- C_DISCOR : A delayed differential between two boolean or analog values sets/resets a boolean. SOF compatible
+>- C_TFONCT : Runtime calculation function. SOF compatible
 
-> C_TPOCDE : Same as C_CDELEM, but with activation and deactivation delays. SOF compatible
-
-> C_COMMUT : SOF integer calculation function.
-
-> C_DISCOR : A delayed differential between two boolean or analog values sets/resets a boolean. SOF compatible
-
-> C_TFONCT : Runtime calculation function. SOF compatible
 "R" family  PID gets in the ring
 > R_ANA3PL : Translates a 0-100% action to tristate through 2 booleans. SOF compatible
 > R_ANA3PT : Translates a 0-100% action to tristate through 2 binary outputs. SOF compatible
