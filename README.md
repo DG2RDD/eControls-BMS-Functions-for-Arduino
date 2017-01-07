@@ -22,6 +22,7 @@ You will find most of them can be overridden through an integer value called CFG
 - CFG at 1 means auto (function active)
 - CFG at 2 means action overriden to a fixed value or On (with security active)
 - CFG at 3 means action overriden to max value or On (unconditional). 
+
 Of course, there is a function to produce an acceptable CFG value from logical conditions, called C_COMMUT.
 
 Now you're done with your babbling, what about some code ? 
