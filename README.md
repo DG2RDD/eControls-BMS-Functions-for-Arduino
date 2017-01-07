@@ -51,7 +51,7 @@ Now you're done with your babbling, what about some code ?
 - T_COMULT : Multiplexes a 16-boolean array into an unsigned integer. SOF compatible
 - T_DEMULT : Demultiplexes an unsigned integer to a 16-boolean array. SOF compatible
 - T_DMULTC : Demultiplexes 5 dry contacts from a voltage input (needs some cabling). SOF compatible
-- T_HYSTPO : Delayed Set/Reset of a boolean according to and analog value and hi/lo limits. SOF compatible
+- T_HYSTPO : Delayed Set/Reset of a boolean according to and analog value and hi/lo limits. Adapted SOF
 - T_LIMVAR : Variation speed limiter in an analog value. SOF compatible 
 - T_MOYDYN : Dynamic averaging (first-order filter) on an analog value. SOF compatible
 - T_MULSEC : Sets/resets commands according to the number ordered, defaults, prioritties and mutual replacement. SOF compat.
