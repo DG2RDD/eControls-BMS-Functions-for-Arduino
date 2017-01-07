@@ -23,6 +23,7 @@ You will find most of them can be overridden through an integer value called CFG
 Of course, there is a function to produce an acceptable CFG value from logical conditions, called C_COMMUT.
 
 Now you're done with your babbling, what about some code ?
+
 "C" family - Commands to obey
 - C_CDELEM : sets/resets a boolean command according to a boolean run demand and a boolean default. SOF compatible
 - C_TPOCDE : Same as C_CDELEM, but with activation and deactivation delays. SOF compatible
@@ -31,25 +32,25 @@ Now you're done with your babbling, what about some code ?
 - C_TFONCT : Runtime calculation function. SOF compatible
 
 "R" family  PID gets in the ring
-> R_ANA3PL : Translates a 0-100% action to tristate through 2 booleans. SOF compatible
-> R_ANA3PT : Translates a 0-100% action to tristate through 2 binary outputs. SOF compatible
-> R_ANATOL : Translates a 0-100% action to PWM action on a boolean. SOF compatible
-> R_ANATOR : Translates a 0-100% action to PWM action on a binary output. SOF compatible
-> R_PIDITR : Full-digital iterative parallel PID loop. SOF compatible
+- R_ANA3PL : Translates a 0-100% action to tristate through 2 booleans. SOF compatible
+- R_ANA3PT : Translates a 0-100% action to tristate through 2 binary outputs. SOF compatible
+- R_ANATOL : Translates a 0-100% action to PWM action on a boolean. SOF compatible
+- R_ANATOR : Translates a 0-100% action to PWM action on a binary output. SOF compatible
+- R_PIDITR : Full-digital iterative parallel PID loop. SOF compatible
 
 "S" family - Systems considerations
-> S_SCANTS : Calculation of the current CPU scan time. SOF compatible
-> S_TIMERS : Sets/Resets booleans at fixed time intervals. SOF compatible
+- S_SCANTS : Calculation of the current CPU scan time. SOF compatible
+- S_TIMERS : Sets/Resets booleans at fixed time intervals. SOF compatible
 
 "T" family - Bag of tricks
-> T_APPRLN : Translates an analog value into another through a poly-linear curve approximation. SOF compatible
-> T_CLINEB : Translates an nalog avalue into another through a linear segment with low/high limits. SOF compatible
-> T_COMULT : Multiplexes a 16-boolean array into an unsigned integer. SOF compatible
-> T_DEMULT : Demultiplexes an unsigned integer to a 16-boolean array. SOF compatible
-> T_DMULTC : Demultiplexes 5 dry contacts from a voltage input (needs some cabling). SOF compatible
-> T_HYSTPO : Delayed Set/Reset of a boolean according to and analog value and hi/lo limits. SOF compatible
-> T_LIMVAR : Variation speed limiter in an analog value. SOF compatible 
-> T_MOYDYN : Dynamic averaging (first-order filter) on an analog value. SOF compatible
-> T_MULSEC : Sets/resets commands according to the number demanded, defaults, with prioritties and mutual replacement. SOF compat.
-> T_SEQCSR : multiple loads sequencer from an analog command. SOF compatible
-> T_SEQDEM : multiple loads sequencer through delayed hi/lo limits on an analog command. SOF compatible
+- T_APPRLN : Translates an analog value into another through a poly-linear curve approximation. SOF compatible
+- T_CLINEB : Translates an nalog avalue into another through a linear segment with low/high limits. SOF compatible
+- T_COMULT : Multiplexes a 16-boolean array into an unsigned integer. SOF compatible
+- T_DEMULT : Demultiplexes an unsigned integer to a 16-boolean array. SOF compatible
+- T_DMULTC : Demultiplexes 5 dry contacts from a voltage input (needs some cabling). SOF compatible
+- T_HYSTPO : Delayed Set/Reset of a boolean according to and analog value and hi/lo limits. SOF compatible
+- T_LIMVAR : Variation speed limiter in an analog value. SOF compatible 
+- T_MOYDYN : Dynamic averaging (first-order filter) on an analog value. SOF compatible
+- T_MULSEC : Sets/resets commands according to the number demanded, defaults, with prioritties and mutual replacement. SOF compat.
+- T_SEQCSR : multiple loads sequencer from an analog command. SOF compatible
+- T_SEQDEM : multiple loads sequencer through delayed hi/lo limits on an analog command. SOF compatible
