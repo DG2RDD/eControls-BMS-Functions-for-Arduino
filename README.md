@@ -25,7 +25,7 @@ You will find most of them can be overridden through an integer value called CFG
 
 Of course, there is a function to produce an acceptable CFG value from logical conditions, called C_COMMUT.
 
-Now you're done with your babbling, what about some code ? 
+Eh, Mack, Now you're done with your babbling, what about some code ? 
 
 "C" family - Commands to obey
 - C_CDELEM : sets/resets a boolean command according to a boolean run demand and a boolean default. SOF compatible
@@ -54,6 +54,6 @@ Now you're done with your babbling, what about some code ?
 - T_HYSTPO : Delayed Set/Reset of a boolean according to and analog value and hi/lo limits. Adapted SOF
 - T_LIMVAR : Variation speed limiter in an analog value. SOF compatible 
 - T_MOYDYN : Dynamic averaging (first-order filter) on an analog value. SOF compatible
-- T_MULSEC : Sets/resets commands according to the number ordered, defaults, prioritties and mutual replacement. SOF compat.
+- T_MULSEC : Sets/resets commands according to the number ordered, defaults, priorities and mutual replacement. SOF compat.
 - T_SEQCSR : multiple loads sequencer from an analog command. SOF compatible
 - T_SEQDEM : multiple loads sequencer through delayed hi/lo limits on an analog command. SOF compatible 
