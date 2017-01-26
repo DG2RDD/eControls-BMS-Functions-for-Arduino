@@ -1,5 +1,5 @@
 /* ------------------------------------------------------------------------------------------------------------------------------------------*
- * SE2R : 07/01/2017 - Fonctions Arduino pour systèmes de GTB - Fichier de code source                                        Version 1.02   *
+ * SE2R : 18/01/2017 - Fonctions Arduino pour systèmes de GTB - Fichier de code source                                        Version 1.02   *
  * ------------------------------------------------------------------------------------------------------------------------------------------*
  * Fonction de cette bibliothèque                                                                                                            *
  *        C_CDELEM - Fonction de commande de booléen avec prise en compte de forçage et de défaut                (Compatible IFS) 12/06/2015 *
@@ -38,7 +38,7 @@
  * @ file	BMS.h
  * @brief	Bibliothèque de fonctions de contrôle-commande pour systèmes de GTB.
  * @author	SE2R, Didier DORGUIN
- * @date	07/01/2017
+ * @date	18/01/2017
  * @version	1.02
  */
  
