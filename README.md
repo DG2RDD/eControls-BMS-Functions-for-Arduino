@@ -1,4 +1,4 @@
-# eControls-BMS
+# eControls-BMS_Fr and BMS_En
 Arduino functions library for BMS and industrial controls 
 
 Have you ever been trying to write a PID in Arduino code from scratch ? Did your arduino learn how to fly in the process ? 
