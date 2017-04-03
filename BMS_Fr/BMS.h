@@ -1,5 +1,5 @@
 /* ------------------------------------------------------------------------------------------------------------------------------------------*
- * SE2R : 18/01/2017 - Fonctions Arduino pour systèmes de GTB - Fichier de code source                                        Version 1.02   *
+ * SE2R : 29/03/2017 - Fonctions Arduino pour systèmes de GTB - Fichier de code source                                        Version 1.02   *
  * ------------------------------------------------------------------------------------------------------------------------------------------*
  * Fonction de cette bibliothèque                                                                                                            *
  *        C_CDELEM - Fonction de commande de booléen avec prise en compte de forçage et de défaut                (Compatible IFS) 12/06/2015 *
@@ -7,14 +7,14 @@
  *        C_COMMUT - Fonction de calcul de variable pour une Interface de Forçage Standardisée (IFS)                              12/06/2015 *
  *        C_DISCOR - Fonction de détection temporisée de discordance entre deux valeurs ToR ou analogiques       (Compatible IFS) 29/06/2015 *
  *        C_TFONCT - Fonction de calcul de temps de fonctionnement                                               (Compatible IFS) 12/06/2015 *
- *        R_ANA3PL - Fonction de transformation d'un pourcentage en commande 3-Points sur deux points binaires   (Compatible IFS) 30/06/2015 *
- *        R_ANA3PT - Fonction de transformation d'un pourcentage en commande 3-Points                            (Compatible IFS) 25/06/2015 *
+ *        R_ANA3PL - Fonction de transformation d'un pourcentage en commande 3-Points sur deux points binaires   (Compatible IFS) 29/03/2017 *
+ *        R_ANA3PT - Fonction de transformation d'un pourcentage en commande 3-Points                            (Compatible IFS) 29/03/2017 *
  *        R_ANATOL - Fonction de transformation d'un pourcentage en commande PWM vers un point binaire           (Compatible IFS) 08/06/2016 *
  *        R_ANATOR - Fonction de transformation d'un pourcentage en commande PWM                                 (Compatible IFS) 08/06/2016 *
  *        R_PIDITR - Fonction de régulation par correction PID itérative                                         (Compatible IFS) 13/10/2016 *
  *        S_SCANTS - Fonction de calcul du temps de cycle programme en secondes                                                   07/08/2015 *
  *        S_TIMERS - Fonction de définition de temps de cycle à intervalles réguliers                                             31/05/2016 *
- *        T_APPRLN - Fonction d'approximation linéaire a segmnts multiples                                       (Compatible IFS) 23/06/2015 *
+ *        T_APPRLN - Fonction d'approximation linéaire a segmnts multiples                                       (Compatible IFS) 31/03/2017 *
  *        T_CLINEB - Fonction de conversion linéaire bornée de valeur numérique                                  (Compatible IFS) 18/05/2015 *
  *        T_COMULT - Fonction de multiplexage d'un tableau de 16 booléens dans un entier non signé               (Compatible IFS) 22/10/2016 *
  *        T_DEMULT - Fonction de démultiplexage d'un entier non signé dans un tableau de booléens                (Compatible IFS) 22/10/2016 *
@@ -38,7 +38,7 @@
  * @ file	BMS.h
  * @brief	Bibliothèque de fonctions de contrôle-commande pour systèmes de GTB.
  * @author	SE2R, Didier DORGUIN
- * @date	18/01/2017
+ * @date	31/03/2017
  * @version	1.02
  */
  
