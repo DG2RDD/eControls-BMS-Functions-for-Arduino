@@ -1,5 +1,5 @@
 /* ------------------------------------------------------------------------------------------------------------------------------------------*
- * SE2R : 18/01/2017 - Fonctions Arduino pour systèmes de GTB - Fichier de code source                                        Version 1.02   *
+ * SE2R : 31/03/2017 - Fonctions Arduino pour systèmes de GTB - Fichier de code source                                        Version 1.02   *
  * ------------------------------------------------------------------------------------------------------------------------------------------*
  * Fonction de cette bibliothèque                                                                                                            *
  *        C_CDELEM - Fonction de commande de booléen avec prise en compte de forçage et de défaut                (Compatible IFS) 12/06/2015 *
@@ -7,14 +7,14 @@
  *        C_COMMUT - Fonction de calcul de variable pour une Interface de Forçage Standardisée (IFS)                              12/06/2015 *
  *        C_DISCOR - Fonction de détection temporisée de discordance entre deux valeurs ToR ou analogiques       (Compatible IFS) 29/06/2015 *
  *        C_TFONCT - Fonction de calcul de temps de fonctionnement                                               (Compatible IFS) 12/06/2015 *
- *        R_ANA3PL - Fonction de transformation d'un pourcentage en commande 3-Points sur deux points binaires   (Compatible IFS) 30/06/2015 *
- *        R_ANA3PT - Fonction de transformation d'un pourcentage en commande 3-Points                            (Compatible IFS) 25/06/2015 *
+ *        R_ANA3PL - Fonction de transformation d'un pourcentage en commande 3-Points sur deux points binaires   (Compatible IFS) 29/03/2017 *
+ *        R_ANA3PT - Fonction de transformation d'un pourcentage en commande 3-Points                            (Compatible IFS) 29/03/2017 *
  *        R_ANATOL - Fonction de transformation d'un pourcentage en commande PWM vers un point binaire           (Compatible IFS) 08/06/2016 *
  *        R_ANATOR - Fonction de transformation d'un pourcentage en commande PWM                                 (Compatible IFS) 08/06/2016 *
  *        R_PIDITR - Fonction de régulation par correction PID itérative                                         (Compatible IFS) 13/10/2016 *
  *        S_SCANTS - Fonction de calcul du temps de cycle programme en secondes                                                   07/08/2015 *
  *        S_TIMERS - Fonction de définition de temps de cycle à intervalles réguliers                                             31/05/2016 *
- *        T_APPRLN - Fonction d'approximation linéaire a segmnts multiples                                       (Compatible IFS) 23/06/2015 *
+ *        T_APPRLN - Fonction d'approximation linéaire a segmnts multiples                                       (Compatible IFS) 31/03/2017 *
  *        T_CLINEB - Fonction de conversion linéaire bornée de valeur numérique                                  (Compatible IFS) 18/05/2015 *
  *        T_COMULT - Fonction de multiplexage d'un tableau de 16 booléens dans un entier non signé               (Compatible IFS) 22/10/2016 *
  *        T_DEMULT - Fonction de démultiplexage d'un entier non signé dans un tableau de booléens                (Compatible IFS) 07/01/2017 *
@@ -255,7 +255,7 @@ return;}
 
 void BMS::R_ANA3PL(float VPC[], float VTC[], boolean RES[], int CFG) {
 /*-------------------------------------------------------------------------------------------------------------------------------------------*
- * SE2R : R_ANA3PL - Fonction de transformation d'un pourcentage en commande 3-Points sur deux points binaires   (Compatible IFS) 30/06/2015 *
+ * SE2R : R_ANA3PL - Fonction de transformation d'un pourcentage en commande 3-Points sur deux points binaires   (Compatible IFS) 29/03/2017 *
  * ------------------------------------------------------------------------------------------------------------------------------------------*
  *        R_ANA3PL(float VPC[], float VTC[], boolean RES[], int CFG)                                                                         *
  *                VPC : [00] Signal de commande de régulation en pourcentage à convertir                                                     *
@@ -285,14 +285,10 @@ void BMS::R_ANA3PL(float VPC[], float VTC[], boolean RES[], int CFG) {
  *-------------------------------------------------------------------------------------------------------------------------------------------*
  * 30/06/2015 : SE2R, DD : Tested et validated on benchmark                                                                                  *
  * ------------------------------------------------------------------------------------------------------------------------------------------*/
-int NUM[3];
+float NUM[3];
 VTC[2] =  max(0, (millis() - VTC[4])) / 1000;
 VTC[3] =  VTC[3] + VTC[2];
 VTC[4] =  millis();
-if (VTC[3] >= abs(VTC[5])) {
-	RES[0] = false;
-	RES[1] = false;
-}
 if (VTC[3] >= VTC[0]) {
 	VTC[3] = 0;
 	switch (CFG) {
@@ -303,20 +299,21 @@ if (VTC[3] >= VTC[0]) {
 			NUM[1] = NUM[0] * VTC[1] / 100;
 			NUM[2] = abs(NUM[1]);
 			if ((NUM[2] >= VTC[0]) || (VPC[0] < 0.1) || (VPC[0] > 99.9)) {
-				if ((NUM[1] < NUM[2]) || (VPC[0] < 0.1)) {
+				if ((NUM[1] < 0) || (VPC[0] < 0.1)) {
 					VTC[5] = 0 - VTC[0]; 
 					VPC[1] = max(VPC[1] - (VTC[0] * 100 / VTC[1]), 0);
 				}
-				if ((NUM[1] > NUM[2]) || (VPC[0] > 99.9)) {
+				if ((NUM[1] > 0) || (VPC[0] > 99.9)) {
 					VTC[5] = VTC[0];
 					VPC[1] = min(VPC[1] + (VTC[0] * 100 / VTC[1]), 100);
 				}
 			} else {
-				VTC[5] = 0 + NUM[1]; 
+				VTC[5] = NUM[1]; 
 				VPC[1] = VPC[0];
 			}
-			if (VTC[5] > 0) { RES[0] = true; RES[1] = false; }
-			if (VTC[5] < 0) { RES[0] = false; RES[1] = true; }
+			if (VTC[5] > 0.5)  { VTC[5] = VTC[5] - VTC[2]; RES[0] = true; RES[1] = false; }
+			if ((VTC[5] <= 0.5) && (VTC[5] >= -0.5)) { RES[0] = false; RES[1] = false; }
+			if (VTC[5] < -0.5) { VTC[5] = VTC[5] + VTC[2]; RES[0] = false; RES[1] = true; }
 			return;
 		case 2 :
 			RES[0] = true;
@@ -341,7 +338,7 @@ return;}
 
 void BMS::R_ANA3PT(float VPC[], float VTC[], int VNO, int VNF, int CFG) {
 /*-------------------------------------------------------------------------------------------------------------------------------------------*
- * SE2R : R_ANA3PT - Fonction de transformation d'un pourcentage en commande 3-Points                            (Compatible IFS) 25/06/2015 *
+ * SE2R : R_ANA3PT - Fonction de transformation d'un pourcentage en commande 3-Points                            (Compatible IFS) 29/03/2017 *
  * ------------------------------------------------------------------------------------------------------------------------------------------*
  *        R_ANA3PT(float VPC[], float VTC[], int VNO, int VNF, int CFG)                                                                      *
  *                VPC : [00] Signal de commande de régulation en pourcentage à convertir                                                     *
@@ -371,14 +368,10 @@ void BMS::R_ANA3PT(float VPC[], float VTC[], int VNO, int VNF, int CFG) {
  *-------------------------------------------------------------------------------------------------------------------------------------------*
  * 25/06/2015 : SE2R, DD : Tested et validated on benchmark                                                                                  *
  * ------------------------------------------------------------------------------------------------------------------------------------------*/
-int NUM[3];
+float NUM[3];
 VTC[2] =  max(0, (millis() - VTC[4])) / 1000;
 VTC[3] =  VTC[3] + VTC[2];
 VTC[4] =  millis();
-if (VTC[3] >= abs(VTC[5])) {
-	digitalWrite(VNO, LOW);
-	digitalWrite(VNF, LOW);
-}
 if (VTC[3] >= VTC[0]) {
 	VTC[3] = 0;
 	switch (CFG) {
@@ -389,20 +382,21 @@ if (VTC[3] >= VTC[0]) {
 			NUM[1] = NUM[0] * VTC[1] / 100;
 			NUM[2] = abs(NUM[1]);
 			if ((NUM[2] >= VTC[0]) || (VPC[0] < 0.1) || (VPC[0] > 99.9)) {
-				if ((NUM[1] < NUM[2]) || (VPC[0] < 0.1)) {
+				if ((NUM[1] < 0) || (VPC[0] < 0.1)) {
 					VTC[5] = 0 - VTC[0]; 
 					VPC[1] = max(VPC[1] - (VTC[0] * 100 / VTC[1]), 0);
 				}
-				if ((NUM[1] > NUM[2]) || (VPC[0] > 99.9)) {
+				if ((NUM[1] > 0) || (VPC[0] > 99.9)) {
 					VTC[5] = VTC[0];
 					VPC[1] = min(VPC[1] + (VTC[0] * 100 / VTC[1]), 100);
 				}
 			} else {
-				VTC[5] = 0 + NUM[1]; 
+				VTC[5] = NUM[1];
 				VPC[1] = VPC[0];
 			}
-			if (VTC[5] > 0) { digitalWrite(VNO, HIGH); digitalWrite(VNF, LOW); }
-			if (VTC[5] < 0) { digitalWrite(VNO, LOW); digitalWrite(VNF, HIGH); }
+			if (VTC[5] > 0.5)  { VTC[5] = VTC[5] - VTC[2]; digitalWrite(VNO, HIGH); digitalWrite(VNF, LOW); }
+			if ((VTC[5] <= 0.5) && (VTC[5] >= -0.5)) { digitalWrite(VNO, LOW); digitalWrite(VNF, LOW);  }
+			if (VTC[5] < -0.5) { VTC[5] = VTC[5] + VTC[2]; digitalWrite(VNO, LOW); digitalWrite(VNF, HIGH);  }
 			return;
 		case 2 :
 			digitalWrite(VNO, HIGH);
@@ -673,11 +667,10 @@ return;}
 
 void BMS::T_APPRLN(float MES, int VTE[], float VTS[], int CFG) {
 /*-------------------------------------------------------------------------------------------------------------------------------------------*
- * SE2R : T_APPRLN - Fonction d'approximation linéaire a segmnts multiples                                       (Compatible IFS) 23/06/2015 *
+ * SE2R : T_APPRLN - Fonction d'approximation linéaire a segmnts multiples                                       (Compatible IFS) 31/03/2017 *
  * ------------------------------------------------------------------------------------------------------------------------------------------*
  *        T_APPRLN(float MES, int VTE[], float VTS[], int CFG)                                                                               *
  *                MES : Valeur à convertir                                                                                                   *
- *                      [01] Nombre total des équipements commandés par la fonction                                                          *
  *                VTE : [00] Nombre de bornes de segments d'entrées et de sorties                                                            *
  *                      [01] Borne inférieure du premier segment d'entrée                                                                    *
  *                      [02] Borne supérieure du premier segment d'entrée et borne inférieure du 2e segment d'entrée                         *
@@ -712,29 +705,22 @@ switch (CFG) {
     case 1 :
 		NUM[0] = 2;
 		NUM[1] = 0;
-		if (MES < VTE[1]) { 
-			VTS[0] = VTS[1];
+		if (MES <= VTE[1]) { VTS[0] = VTS[1]; break; }
+		if ((MES > VTE[1]) && (MES < VTE[VTE[0]])) {
+			for(NUM[0] = 2;  NUM[0] <= VTE[0] ; NUM[0]++) { if (MES > VTE[NUM[0] - 1]) { NUM[1] = NUM[0]; } }
+			if (VTE[NUM[1]] == VTE[NUM[1] - 1]) { 
+				VTS[0] =  VTS[NUM[1] - 1];
+			} else {
+				VTS[0] = VTS[NUM[1] - 1] + (((MES - VTE[NUM[1] - 1]) * (VTS[NUM[1]] - VTS[NUM[1] - 1])) / (VTE[NUM[1]] - VTE[NUM[1] - 1])); 
+			}
 			break;
 		}
-		if (MES > VTE[VTE[0]]) { 
-			VTS[0] = VTS[VTE[0]];
-			break;
-		}
-		for(NUM[0] = 2;  NUM[0] <= VTE[0] ; NUM[0]++) {
-			if (MES > VTE[NUM[0] - 1]) { NUM[1] = NUM[0]; }
-		}
-		if (VTE[NUM[1]] == VTE[NUM[1] - 1]) { 
-			VTS[0] =  VTS[NUM[1] - 1];
-		} else {
-			VTS[0] = VTS[NUM[1] - 1] + (((MES - VTE[NUM[1] - 1]) * (VTS[NUM[1]] - VTS[NUM[1] - 1])) / (VTE[NUM[1]] - VTE[NUM[1] - 1])); 
-		}
-		break;
+		if (MES >= VTE[VTE[0]])	{ VTS[0] = VTS[VTE[0]]; break; }
 	case 2 :
 		VTS[0] = VTS[1];
 		break;
 	case 3 :
 		VTS[0] = VTS[VTE[0]];
-		
 	default:
 		VTS[0] = 0;
 		break;
