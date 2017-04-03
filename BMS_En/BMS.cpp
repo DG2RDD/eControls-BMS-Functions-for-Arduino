@@ -1,5 +1,5 @@
 /* ------------------------------------------------------------------------------------------------------------------------------------------*
- * SE2R : 12/01/2017 - BMS Functions for Arduino - Source code file                                                           Version 1.02   *
+ * SE2R : 31/03/2017 - BMS Functions for Arduino - Source code file                                                           Version 1.02   *
  * ------------------------------------------------------------------------------------------------------------------------------------------*
  * Functions in this library                                                                                                                 *
  *        C_CDELEM - On/Off boolean control taking account of a fault, and standardized override interface (SOI) (SOF compatible) 12/06/2015 *
@@ -7,12 +7,14 @@
  *        C_COMMUT - Produces a standardized override command from boolean sets of conditions                                     12/06/2015 *
  *        C_DISCOR - Delayed differential detection between two values,                                          (SOF compatible) 29/06/2015 *
  *        C_TFONCT - On-time hours counter                                                                       (SOF compatible) 12/06/2015 *
- *        R_ANA3PL - Analog-to-tristate converter, output in a boolean array size 2 [0] open [1] close           (SOF compatible) 30/06/2015 *
- *        R_ANA3PT - Analog-to-tristate converter, output on 2 digital output channels to open or close          (SOF compatible) 30/06/2015 *
+ *        R_ANA3PL - Analog-to-tristate converter, output in a boolean array size 2 [0] open [1] close           (SOF compatible) 29/03/2017 *
+ *        R_ANA3PT - Analog-to-tristate converter, output on 2 digital output channels to open or close          (SOF compatible) 29/03/2017 *
+ *        R_ANATOL - Analog-to-Pulse Width Modulation (PWM), output in a boolean                                 (SOF compatible) 08/06/2016 *
  *        R_ANATOR - Analog-to-Pulse Width Modulation (PWM)                                                      (SOF compatible) 25/06/2015 *
  *        R_PIDITR - Full-numeric Proportionnal-Integral-Derivative (PID) loop                                   (SOF compatible) 24/06/2015 *
  *        S_SCANTS - Scan-time calculation in seconds                                                                             07/08/2015 *
- *        T_APPRLN - Multi-segment linear conversion of a float value to another                                 (SOF compatible) 23/06/2015 *
+ *        S_TIMERS - Generates pulses on booleans at regular intervals (clock time base)                                          31/05/2016 *
+ *        T_APPRLN - Multi-segment linear conversion of a float value to another                                 (SOF compatible) 31/03/2017 *
  *        T_CLINEB - Two-points limited linear conversion of a float value to another                            (SOF compatible) 18/05/2015 *
  *        T_COMULT - Multiplexes (powers of 2 encoding) a 16-bit boolean array to an unsigned integer            (SOF compatible) 06/04/2016 *
  *        T_DEMULT - Demultiplexes (powers of 2 decoding) an unsigned integer to a 16-bit boolean array          (SOF compatible) 06/04/2016 *
@@ -258,7 +260,7 @@ return;}
 
 void BMS::R_ANA3PL(float VPC[], float VTC[], boolean RES[], int CFG) {
 /*-------------------------------------------------------------------------------------------------------------------------------------------*
- * SE2R : R_ANA3PL - Translates a percentage command to tristate open/close timed action on booleans             (SOF compatible) 30/06/2015 *
+ * SE2R : R_ANA3PL - Translates a percentage command to tristate open/close timed action on booleans             (SOF compatible) 29/03/2017 *
  * ------------------------------------------------------------------------------------------------------------------------------------------*
  *        R_ANA3PL(float VPC[], float VTC[], boolean RES[], int CFG)                                                                         *
  *                VPC : [00] Percentage to translate to tristate action                                                                      *
@@ -288,14 +290,10 @@ void BMS::R_ANA3PL(float VPC[], float VTC[], boolean RES[], int CFG) {
  *-------------------------------------------------------------------------------------------------------------------------------------------*
  * 30/06/2015 : SE2R, DD : Tested et validated on benchmark                                                                                  *
  * ------------------------------------------------------------------------------------------------------------------------------------------*/
-int NUM[3];
+float NUM[3];
 VTC[2] =  max(0, (millis() - VTC[4])) / 1000;
 VTC[3] =  VTC[3] + VTC[2];
 VTC[4] =  millis();
-if (VTC[3] >= abs(VTC[5])) {
-	RES[0] = false;
-	RES[1] = false;
-}
 if (VTC[3] >= VTC[0]) {
 	VTC[3] = 0;
 	switch (CFG) {
@@ -306,20 +304,21 @@ if (VTC[3] >= VTC[0]) {
 			NUM[1] = NUM[0] * VTC[1] / 100;
 			NUM[2] = abs(NUM[1]);
 			if ((NUM[2] >= VTC[0]) || (VPC[0] < 0.1) || (VPC[0] > 99.9)) {
-				if ((NUM[1] < NUM[2]) || (VPC[0] < 0.1)) {
+				if ((NUM[1] < 0) || (VPC[0] < 0.1)) {
 					VTC[5] = 0 - VTC[0]; 
 					VPC[1] = max(VPC[1] - (VTC[0] * 100 / VTC[1]), 0);
 				}
-				if ((NUM[1] > NUM[2]) || (VPC[0] > 99.9)) {
+				if ((NUM[1] > 0) || (VPC[0] > 99.9)) {
 					VTC[5] = VTC[0];
 					VPC[1] = min(VPC[1] + (VTC[0] * 100 / VTC[1]), 100);
 				}
 			} else {
-				VTC[5] = 0 + NUM[1]; 
+				VTC[5] = NUM[1]; 
 				VPC[1] = VPC[0];
 			}
-			if (VTC[5] > 0) { RES[0] = true; RES[1] = false; }
-			if (VTC[5] < 0) { RES[0] = false; RES[1] = true; }
+			if (VTC[5] > 0.5)  { VTC[5] = VTC[5] - VTC[2]; RES[0] = true; RES[1] = false; }
+			if ((VTC[5] <= 0.5) && (VTC[5] >= -0.5)) { RES[0] = false; RES[1] = false; }
+			if (VTC[5] < -0.5) { VTC[5] = VTC[5] + VTC[2]; RES[0] = false; RES[1] = true; }
 			return;
 		case 2 :
 			RES[0] = true;
@@ -344,7 +343,7 @@ return;}
 
 void BMS::R_ANA3PT(float VPC[], float VTC[], int VNO, int VNF, int CFG) {
 /*-------------------------------------------------------------------------------------------------------------------------------------------*
- * SE2R : R_ANA3PT - Translates a percentage command to tristate open/close timed action on outputs              (SOF compatible) 25/06/2015 *
+ * SE2R : R_ANA3PT - Translates a percentage command to tristate open/close timed action on outputs              (SOF compatible) 29/03/2017 *
  * ------------------------------------------------------------------------------------------------------------------------------------------*
  *        R_ANA3PT(float VPC[], float VTC[], int VNO, int VNF, int CFG)                                                                      *
  *                VPC : [00] Percentage to translate to tristate action                                                                      *
@@ -374,14 +373,10 @@ void BMS::R_ANA3PT(float VPC[], float VTC[], int VNO, int VNF, int CFG) {
  *-------------------------------------------------------------------------------------------------------------------------------------------*
  * 25/06/2015 : SE2R, DD : Tested et validated on benchmark                                                                                  *
  * ------------------------------------------------------------------------------------------------------------------------------------------*/
-int NUM[3];
+float NUM[3];
 VTC[2] =  max(0, (millis() - VTC[4])) / 1000;
 VTC[3] =  VTC[3] + VTC[2];
 VTC[4] =  millis();
-if (VTC[3] >= abs(VTC[5])) {
-	digitalWrite(VNO, LOW);
-	digitalWrite(VNF, LOW);
-}
 if (VTC[3] >= VTC[0]) {
 	VTC[3] = 0;
 	switch (CFG) {
@@ -392,20 +387,21 @@ if (VTC[3] >= VTC[0]) {
 			NUM[1] = NUM[0] * VTC[1] / 100;
 			NUM[2] = abs(NUM[1]);
 			if ((NUM[2] >= VTC[0]) || (VPC[0] < 0.1) || (VPC[0] > 99.9)) {
-				if ((NUM[1] < NUM[2]) || (VPC[0] < 0.1)) {
+				if ((NUM[1] < 0) || (VPC[0] < 0.1)) {
 					VTC[5] = 0 - VTC[0]; 
 					VPC[1] = max(VPC[1] - (VTC[0] * 100 / VTC[1]), 0);
 				}
-				if ((NUM[1] > NUM[2]) || (VPC[0] > 99.9)) {
+				if ((NUM[1] > 0) || (VPC[0] > 99.9)) {
 					VTC[5] = VTC[0];
 					VPC[1] = min(VPC[1] + (VTC[0] * 100 / VTC[1]), 100);
 				}
 			} else {
-				VTC[5] = 0 + NUM[1]; 
+				VTC[5] = NUM[1];
 				VPC[1] = VPC[0];
 			}
-			if (VTC[5] > 0) { digitalWrite(VNO, HIGH); digitalWrite(VNF, LOW); }
-			if (VTC[5] < 0) { digitalWrite(VNO, LOW); digitalWrite(VNF, HIGH); }
+			if (VTC[5] > 0.5)  { VTC[5] = VTC[5] - VTC[2]; digitalWrite(VNO, HIGH); digitalWrite(VNF, LOW); }
+			if ((VTC[5] <= 0.5) && (VTC[5] >= -0.5)) { digitalWrite(VNO, LOW); digitalWrite(VNF, LOW);  }
+			if (VTC[5] < -0.5) { VTC[5] = VTC[5] + VTC[2]; digitalWrite(VNO, LOW); digitalWrite(VNF, HIGH);  }
 			return;
 		case 2 :
 			digitalWrite(VNO, HIGH);
@@ -709,29 +705,22 @@ switch (CFG) {
     case 1 :
 		NUM[0] = 2;
 		NUM[1] = 0;
-		if (MES < VTE[1]) { 
-			VTS[0] = VTS[1];
+		if (MES <= VTE[1]) { VTS[0] = VTS[1]; break; }
+		if ((MES > VTE[1]) && (MES < VTE[VTE[0]])) {
+			for(NUM[0] = 2;  NUM[0] <= VTE[0] ; NUM[0]++) { if (MES > VTE[NUM[0] - 1]) { NUM[1] = NUM[0]; } }
+			if (VTE[NUM[1]] == VTE[NUM[1] - 1]) { 
+				VTS[0] =  VTS[NUM[1] - 1];
+			} else {
+				VTS[0] = VTS[NUM[1] - 1] + (((MES - VTE[NUM[1] - 1]) * (VTS[NUM[1]] - VTS[NUM[1] - 1])) / (VTE[NUM[1]] - VTE[NUM[1] - 1])); 
+			}
 			break;
 		}
-		if (MES > VTE[VTE[0]]) { 
-			VTS[0] = VTS[VTE[0]];
-			break;
-		}
-		for(NUM[0] = 2;  NUM[0] <= VTE[0] ; NUM[0]++) {
-			if (MES > VTE[NUM[0] - 1]) { NUM[1] = NUM[0]; }
-		}
-		if (VTE[NUM[1]] == VTE[NUM[1] - 1]) { 
-			VTS[0] =  VTS[NUM[1] - 1];
-		} else {
-			VTS[0] = VTS[NUM[1] - 1] + (((MES - VTE[NUM[1] - 1]) * (VTS[NUM[1]] - VTS[NUM[1] - 1])) / (VTE[NUM[1]] - VTE[NUM[1] - 1])); 
-		}
-		break;
+		if (MES >= VTE[VTE[0]])	{ VTS[0] = VTS[VTE[0]]; break; }
 	case 2 :
 		VTS[0] = VTS[1];
 		break;
 	case 3 :
 		VTS[0] = VTS[VTE[0]];
-		
 	default:
 		VTS[0] = 0;
 		break;

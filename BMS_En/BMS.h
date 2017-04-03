@@ -1,5 +1,5 @@
  /* ------------------------------------------------------------------------------------------------------------------------------------------*
- * SE2R : 12/01/2017 - BMS Functions for Arduino - Source code file                                                           Version 1.02   *
+ * SE2R : 31/03/2017 - BMS Functions for Arduino - Source code file                                                           Version 1.02   *
  * ------------------------------------------------------------------------------------------------------------------------------------------*
  * Functions in this library                                                                                                                 *
  *        C_CDELEM - On/Off boolean control taking account of a fault, and standardized override interface (SOI) (SOF compatible) 12/06/2015 *
@@ -7,12 +7,14 @@
  *        C_COMMUT - Produces a standardized override command from boolean sets of conditions                                     12/06/2015 *
  *        C_DISCOR - Delayed differential detection between two values,                                          (SOF compatible) 29/06/2015 *
  *        C_TFONCT - On-time hours counter                                                                       (SOF compatible) 12/06/2015 *
- *        R_ANA3PL - Analog-to-tristate converter, output in a boolean array size 2 [0] open [1] close           (SOF compatible) 30/06/2015 *
- *        R_ANA3PT - Analog-to-tristate converter, output on 2 digital output channels to open or close          (SOF compatible) 30/06/2015 *
+ *        R_ANA3PL - Analog-to-tristate converter, output in a boolean array size 2 [0] open [1] close           (SOF compatible) 29/03/2017 *
+ *        R_ANA3PT - Analog-to-tristate converter, output on 2 digital output channels to open or close          (SOF compatible) 29/03/2017 *
+ *        R_ANATOL - Analog-to-Pulse Width Modulation (PWM), output in a boolean                                 (SOF compatible) 08/06/2016 *
  *        R_ANATOR - Analog-to-Pulse Width Modulation (PWM)                                                      (SOF compatible) 25/06/2015 *
  *        R_PIDITR - Full-numeric Proportionnal-Integral-Derivative (PID) loop                                   (SOF compatible) 24/06/2015 *
  *        S_SCANTS - Scan-time calculation in seconds                                                                             07/08/2015 *
- *        T_APPRLN - Multi-segment linear conversion of a float value to another                                 (SOF compatible) 23/06/2015 *
+ *        S_TIMERS - Generates pulses on booleans at regular intervals (clock time base)                                          31/05/2016 *
+ *        T_APPRLN - Multi-segment linear conversion of a float value to another                                 (SOF compatible) 31/03/2017 *
  *        T_CLINEB - Two-points limited linear conversion of a float value to another                            (SOF compatible) 18/05/2015 *
  *        T_COMULT - Multiplexes (powers of 2 encoding) a 16-bit boolean array to an unsigned integer            (SOF compatible) 06/04/2016 *
  *        T_DEMULT - Demultiplexes (powers of 2 decoding) an unsigned integer to a 16-bit boolean array          (SOF compatible) 06/04/2016 *
@@ -36,7 +38,7 @@
  * @ file	BMS.h
  * @brief	Functions for industrial controls and BMS.
  * @author	SE2R, Didier DORGUIN
- * @date	12/01/2017
+ * @date	31/03/2017
  * @version	1.02
  */
  
